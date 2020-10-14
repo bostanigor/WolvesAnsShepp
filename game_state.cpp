@@ -22,16 +22,6 @@ GameState::GameState(const GameState & other) {
   wolves_turn = other.wolves_turn;
 }
 
-Checker * GameState::get(int x, int y) const {
-  if (!point_valid(Point{x, y}))
-    return nullptr;
-  return board.board[x][y];
-}
-
-Checker * GameState::get(Point point) const {
-  return board.board[point.x][point.y];
-}
-
 bool GameState::move(Move move) {
   auto checker = get(move.from);
   if (checker == nullptr)
@@ -54,6 +44,22 @@ bool GameState::move(Move move) {
 
   wolves_turn =! wolves_turn;
   return true;
+}
+
+bool GameState::check_win() const {
+  if (sheep.pos.y == 0)
+    return true;
+  // TODO: Finish this
+}
+
+Checker * GameState::get(int x, int y) const {
+  if (!point_valid(Point{x, y}))
+    return nullptr;
+  return board.board[x][y];
+}
+
+Checker * GameState::get(Point point) const {
+  return board.board[point.x][point.y];
 }
 
 bool GameState::point_valid(Point point) {

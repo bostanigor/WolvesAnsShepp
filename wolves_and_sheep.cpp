@@ -19,6 +19,7 @@ void WolvesAndSheep::start() {
     try {
       decode(answer, move);
       state.move(move);
+      state.
     }
     catch (GameException & e) {
       std::cout << e.what() << std::endl;

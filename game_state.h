@@ -29,6 +29,7 @@ public:
   GameState(const GameState &);
 
   bool move(Move);
+  bool check_win() const;
 
   Checker * get(int x, int y) const;
   Checker * get(Point point) const;
