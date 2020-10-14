@@ -30,9 +30,22 @@ public:
 
   bool move(Move);
 
-  Checker * get(int x, int y);
-  Checker * get(Point point);
+  Checker * get(int x, int y) const;
+  Checker * get(Point point) const;
 
 private:
   static bool point_valid(Point);
+};
+
+class GameException {
+  std::string message;
+
+public:
+  GameException(const std::string & message) {
+    this->message = message;
+  }
+
+  std::string what() const{
+    return message;
+  }
 };

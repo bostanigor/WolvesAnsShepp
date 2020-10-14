@@ -22,30 +22,30 @@ GameState::GameState(const GameState & other) {
   wolves_turn = other.wolves_turn;
 }
 
-Checker * GameState::get(int x, int y) {
+Checker * GameState::get(int x, int y) const {
   if (!point_valid(Point{x, y}))
     return nullptr;
   return board.board[x][y];
 }
 
-Checker * GameState::get(Point point) {
+Checker * GameState::get(Point point) const {
   return board.board[point.x][point.y];
 }
 
 bool GameState::move(Move move) {
   auto checker = get(move.from);
-  if (checker == nullptr ||    // No checker found
-      checker->type == WOLF != wolves_turn) // If wrong player's checker
-    return false;
-
+  if (checker == nullptr)
+    throw GameException("No checker at the point");
+  if (checker->type == WOLF != wolves_turn) // If wrong player's checker
+    throw GameException("Wrong player's checker");
   if (abs(move.from.x - move.to.x) != 1 ||
-      abs(move.from.y - move.to.y) != 1 ||
-      !point_valid(move.to)) // If invalid turn
-    return false;
-
+      abs(move.from.y - move.to.y) != 1)
+    throw GameException("Invalid move");
+  if (!point_valid(move.to))
+    throw GameException("Destination out of bounds");
   auto to = get(move.to);
-  if (to != nullptr) // Point is not empty
-    return false;
+  if (to != nullptr)
+    throw GameException("Destination is not empty");
 
   checker->pos.x = move.to.x;
   checker->pos.y = move.to.y;
