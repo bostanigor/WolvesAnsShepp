@@ -3,6 +3,7 @@
 #include <string>
 #include "game_state.h"
 #include "player.h"
+#include "helper_structs.h"
 
 class Player;
 
@@ -20,5 +21,5 @@ public:
   void start();
 
 private:
-  bool decode(std::string);
+  static bool decode(const std::string &, Move &);
 };

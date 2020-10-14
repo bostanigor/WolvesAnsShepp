@@ -16,7 +16,14 @@ void WolvesAndSheep::start() {
     if (answer == "EXIT")
       break;
     last_message = answer;
-    decode(answer);
+
+    auto move = Move();
+    if (decode(answer, move))
+      if (state.move(move))
+        continue;
+      else
+        continue;
+
     wolves_turn = !wolves_turn;
   }
 }
@@ -39,19 +46,19 @@ void WolvesAndSheep::print_state() {
   }
 }
 
-bool WolvesAndSheep::decode(std::string message) {
+bool WolvesAndSheep::decode(const std::string & message, Move & move) {
   try {
     auto delimeter_i = message.find("->");
     auto from = message.substr(0, delimeter_i);
     auto to = message.substr(delimeter_i + 3);
 
     auto del_f = from.find(' ');
-    int sx = stoi(from.substr(0, del_f));
-    int sy = stoi(from.substr(del_f + 1));
+    move.from.x = stoi(from.substr(0, del_f));
+    move.from.y = stoi(from.substr(del_f + 1));
 
     auto del_t = to.find(' ');
-    int dx = stoi(to.substr(0, del_t));
-    int dy = stoi(to.substr(del_t + 1));
+    move.to.x = stoi(to.substr(0, del_t));
+    move.to.y = stoi(to.substr(del_t + 1));
 //    std::cout << sx << " " << sy << " " << dx << " " << dy << std::endl;
     return true;
   }

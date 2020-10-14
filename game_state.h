@@ -2,6 +2,7 @@
 
 #include <array>
 #include <iostream>
+#include "helper_structs.h"
 
 const int BOARD_WIDTH = 8;
 const int BOARD_HEIGHT = 8;
@@ -9,7 +10,7 @@ const int BOARD_HEIGHT = 8;
 enum CheckerType { WOLF, SHEEP };
 
 struct Checker {
-  int x, y;
+  Point pos;
   CheckerType type;
 };
 
@@ -27,7 +28,11 @@ public:
   GameState();
   GameState(const GameState &);
 
-  bool move(int sx, int sy, int dx, int dy);
+  bool move(Move);
 
   Checker * get(int x, int y);
+  Checker * get(Point point);
+
+private:
+  static bool point_valid(Point);
 };
