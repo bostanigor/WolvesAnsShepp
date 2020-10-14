@@ -3,6 +3,6 @@
 
 int main() {
   auto game = WolvesAndSheep();
-  game.print_state();
+  game.start();
   return 0;
 }

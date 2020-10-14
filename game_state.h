@@ -1,5 +1,4 @@
-#ifndef WOLVESANDSHEEP_GAME_STATE_H
-#define WOLVESANDSHEEP_GAME_STATE_H
+#pragma once
 
 #include <array>
 #include <iostream>
@@ -31,21 +30,4 @@ public:
   bool move(int sx, int sy, int dx, int dy);
 
   Checker * get(int x, int y);
-
-  void print_debug_info() {
-    for (auto wolf : wolves)
-      std::cout << "WOLF: " << wolf.x << ' ' << wolf.y << ' ' << wolf.type << std::endl;
-    std::cout << "SHEEP: " << sheep.x << ' ' << sheep.y << ' ' << sheep.type << std::endl;
-    std::cout << "BOARD:" << std::endl;
-    for (int y = 0; y < BOARD_HEIGHT; y++)
-      for (int x = 0; x < BOARD_WIDTH; x++) {
-        auto temp = get(x, y);
-        if (temp == nullptr)
-          continue;
-        auto t = *temp;
-        std::cout << t.x << ' ' << t.y << ' ' << t.type << std::endl;
-      }
-  }
 };
-
-#endif //WOLVESANDSHEEP_GAME_STATE_H

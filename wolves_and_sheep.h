@@ -1,16 +1,17 @@
-#ifndef WOLVESANDSHEEP_WOLVES_AND_SHEEP_H
-#define WOLVESANDSHEEP_WOLVES_AND_SHEEP_H
+#pragma once
 
 #include <string>
 #include "game_state.h"
 #include "player.h"
 
+class Player;
+
 class WolvesAndSheep {
   GameState state;
-  std::string last_move;
+  std::string last_message;
 
-  Player sheep_player;
-  Player wolves_player;
+  Player * sheep_player;
+  Player * wolves_player;
 
 public:
   WolvesAndSheep();
@@ -19,7 +20,5 @@ public:
   void start();
 
 private:
-  void decode(std::string);
+  bool decode(std::string);
 };
-
-#endif //WOLVESANDSHEEP_WOLVES_AND_SHEEP_H

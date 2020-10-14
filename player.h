@@ -1,20 +1,23 @@
-#ifndef WOLVESANDSHEEP_PLAYER_H
-#define WOLVESANDSHEEP_PLAYER_H
+#pragma once
 
 #include "wolves_and_sheep.h"
 
+class WolvesAndSheep;
 
 class Player {
-  WolvesAndSheep & game;
+protected:
+  WolvesAndSheep * game = nullptr;
 
 public:
-  virtual std::string ask();
+  virtual std::string ask() = 0;
 };
 
-class HumanPlayer : Player {
+class HumanPlayer : public Player {
+public:
+  explicit HumanPlayer(WolvesAndSheep * game);
+
+  std::string ask() override;
 };
 
-class AIPlayer : Player {
+class AIPlayer : public Player {
 };
-
-#endif //WOLVESANDSHEEP_PLAYER_H
