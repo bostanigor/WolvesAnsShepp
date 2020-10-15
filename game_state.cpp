@@ -2,16 +2,16 @@
 
 GameState::GameState() {
   wolves = {
-    Checker{1, 0, WOLF}, Checker{3, 0, WOLF},
-    Checker{5, 0, WOLF}, Checker{7, 0, WOLF}
+    new Checker{1, 0, WOLF}, new Checker{3, 0, WOLF},
+    new Checker{5, 0, WOLF}, new Checker{7, 0, WOLF}
   };
-  sheep = Checker{0, 7, SHEEP};
+  sheep = new Checker{0, 7, SHEEP};
   board = Board();
   for (int i = 0; i < 4; i++) {
-    Checker * wolf = &wolves[i];
+    Checker * wolf = wolves[i];
     board.board[wolf->pos.x][wolf->pos.y] = wolf;
   }
-  board.board[sheep.pos.x][sheep.pos.y] = &sheep;
+  board.board[sheep->pos.x][sheep->pos.y] = sheep;
   wolves_turn = false;
 }
 
@@ -22,7 +22,7 @@ GameState::GameState(const GameState & other) {
   wolves_turn = other.wolves_turn;
 }
 
-bool GameState::move(Move move) {
+bool GameState::move(const Move & move) {
   if (!point_valid(move.from))
     throw GameException("No checker at the point");
   auto checker = get(move.from);
@@ -49,13 +49,13 @@ bool GameState::move(Move move) {
 }
 
 GameStatus GameState::check_win() const {
-  if (sheep.pos.y == 0)
+  if (sheep->pos.y == 0)
     return SHEEP_WON;
   Point points[4] = {
-    Point{sheep.pos.x + 1, sheep.pos.y + 1},
-    Point{sheep.pos.x + 1, sheep.pos.y - 1},
-    Point{sheep.pos.x - 1, sheep.pos.y + 1},
-    Point{sheep.pos.x - 1, sheep.pos.y - 1}
+    Point{sheep->pos.x + 1, sheep->pos.y + 1},
+    Point{sheep->pos.x + 1, sheep->pos.y - 1},
+    Point{sheep->pos.x - 1, sheep->pos.y + 1},
+    Point{sheep->pos.x - 1, sheep->pos.y - 1}
   };
   for (auto point : points)
     if (point_valid(point) && get(point) == nullptr)
@@ -74,4 +74,12 @@ Checker * GameState::get(Point point) const {
 bool GameState::point_valid(Point point) {
   return point.x >= 0 && point.x < BOARD_WIDTH &&
          point.y >= 0 && point.y < BOARD_HEIGHT;
+}
+
+std::array<Checker *, 4> GameState::get_wolves() const {
+  return wolves;
+}
+
+Checker * GameState::get_sheep() const {
+  return sheep;
 }

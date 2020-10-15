@@ -3,8 +3,8 @@
 
 WolvesAndSheep::WolvesAndSheep() {
   last_message = "START";
-  sheep_player = new HumanPlayer(this);
-  wolves_player = new HumanPlayer(this);
+  wolves_player = new AIPlayer(this, true);
+  sheep_player = new HumanPlayer(this, false);
 }
 
 void WolvesAndSheep::start() {
@@ -33,6 +33,10 @@ void WolvesAndSheep::start() {
   }
 }
 
+GameState WolvesAndSheep::copy_state() {
+  return GameState(state);
+}
+
 void WolvesAndSheep::print_state() {
   std::cout << ' ';
   for (int x = 0; x < BOARD_WIDTH; x++)
@@ -53,7 +57,7 @@ void WolvesAndSheep::print_state() {
     }
   }
   std::cout << std::endl << last_message << std::endl;
-  std::cout << std::endl;
+  std::cout << (state.is_wolves_turn() ? "WOLVES TURN" : "SHEEP TURN") << std::endl;
 }
 
 bool WolvesAndSheep::decode(const std::string & message, Move & move) {

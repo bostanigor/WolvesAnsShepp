@@ -17,6 +17,8 @@ class WolvesAndSheep {
 public:
   WolvesAndSheep();
 
+  GameState copy_state();
+
   void print_state();
   void start();
 
