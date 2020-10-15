@@ -23,6 +23,8 @@ GameState::GameState(const GameState & other) {
 }
 
 bool GameState::move(Move move) {
+  if (!point_valid(move.from))
+    throw GameException("No checker at the point");
   auto checker = get(move.from);
   if (checker == nullptr)
     throw GameException("No checker at the point");
@@ -46,15 +48,22 @@ bool GameState::move(Move move) {
   return true;
 }
 
-bool GameState::check_win() const {
+GameStatus GameState::check_win() const {
   if (sheep.pos.y == 0)
-    return true;
-  // TODO: Finish this
+    return SHEEP_WON;
+  Point points[4] = {
+    Point{sheep.pos.x + 1, sheep.pos.y + 1},
+    Point{sheep.pos.x + 1, sheep.pos.y - 1},
+    Point{sheep.pos.x - 1, sheep.pos.y + 1},
+    Point{sheep.pos.x - 1, sheep.pos.y - 1}
+  };
+  for (auto point : points)
+    if (point_valid(point) && get(point) == nullptr)
+      return GAME_CONTINUES;
+  return WOLVES_WON;
 }
 
 Checker * GameState::get(int x, int y) const {
-  if (!point_valid(Point{x, y}))
-    return nullptr;
   return board.board[x][y];
 }
 

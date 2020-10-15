@@ -8,10 +8,14 @@ WolvesAndSheep::WolvesAndSheep() {
 }
 
 void WolvesAndSheep::start() {
-  bool wolves_turn = false;
   while(true){
     print_state();
-    auto answer = wolves_turn ? wolves_player->ask() : sheep_player->ask();
+    auto status = state.check_win();
+    if (status == WOLVES_WON)
+      std::cout << "WOLVES WON\n";
+    if (status == SHEEP_WON)
+      std::cout << "SHEEP WON\n";
+    auto answer = state.is_wolves_turn() ? wolves_player->ask() : sheep_player->ask();
     if (answer == "EXIT")
       break;
 
@@ -19,7 +23,6 @@ void WolvesAndSheep::start() {
     try {
       decode(answer, move);
       state.move(move);
-      state.
     }
     catch (GameException & e) {
       std::cout << e.what() << std::endl;
@@ -27,7 +30,6 @@ void WolvesAndSheep::start() {
     }
 
     last_message = answer;
-    wolves_turn = !wolves_turn;
   }
 }
 
@@ -36,18 +38,22 @@ void WolvesAndSheep::print_state() {
   for (int x = 0; x < BOARD_WIDTH; x++)
     std::cout << ' ' << x;
   for (int y = 0; y < BOARD_HEIGHT; y++) {
-    std::cout << std::endl << y << '|';
+    std::cout << std::endl << y << "▕";
     for (int x = 0; x < BOARD_WIDTH; x++) {
       auto checker = state.get(x,y);
       if (checker == nullptr)
-        std::cout << " |";
+        if ((x + y) % 2 == 0)
+          std::cout << "█▏";
+        else
+          std::cout << " ▕";
       else if (checker->type == WOLF)
-        std::cout << "w|";
+        std::cout << "w▕";
       else
-        std::cout << "s|";
+        std::cout << "s▕";
     }
   }
   std::cout << std::endl << last_message << std::endl;
+  std::cout << std::endl;
 }
 
 bool WolvesAndSheep::decode(const std::string & message, Move & move) {
@@ -63,7 +69,6 @@ bool WolvesAndSheep::decode(const std::string & message, Move & move) {
     auto del_t = to.find(' ');
     move.to.x = stoi(to.substr(0, del_t));
     move.to.y = stoi(to.substr(del_t + 1));
-//    std::cout << sx << " " << sy << " " << dx << " " << dy << std::endl;
     return true;
   }
   catch (const std::exception& ex) {

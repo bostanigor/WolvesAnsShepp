@@ -4,20 +4,6 @@
 #include <iostream>
 #include "helper_structs.h"
 
-const int BOARD_WIDTH = 8;
-const int BOARD_HEIGHT = 8;
-
-enum CheckerType { WOLF, SHEEP };
-
-struct Checker {
-  Point pos;
-  CheckerType type;
-};
-
-struct Board {
-  std::array<std::array<Checker *, BOARD_HEIGHT>, BOARD_WIDTH> board;
-};
-
 class GameState {
   std::array<Checker, 4> wolves;
   Checker sheep;
@@ -29,10 +15,12 @@ public:
   GameState(const GameState &);
 
   bool move(Move);
-  bool check_win() const;
+  GameStatus check_win() const;
 
   Checker * get(int x, int y) const;
   Checker * get(Point point) const;
+
+  bool is_wolves_turn() const { return wolves_turn; }
 
 private:
   static bool point_valid(Point);
