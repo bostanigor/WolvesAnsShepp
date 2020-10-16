@@ -1,21 +1,33 @@
 #include "wolves_and_sheep.h"
 #include <iostream>
+using namespace std::chrono;
 
 WolvesAndSheep::WolvesAndSheep() {
   last_message = "START";
-  wolves_player = new AIPlayer(this, true);
-  sheep_player = new HumanPlayer(this, false);
+  wolves_player = new AIPlayer(this, 7);
+  sheep_player = new AIPlayer(this, 7);
+}
+
+WolvesAndSheep::WolvesAndSheep(Player *sheep_player, Player *wolves_player) {
+  last_message = "START";
+  this->wolves_player = wolves_player;
+  this->sheep_player = sheep_player;
+  wolves_player->game = this;
+  sheep_player->game = this;
 }
 
 void WolvesAndSheep::start() {
   while(true){
     print_state();
     auto status = state.check_win();
-    if (status == WOLVES_WON)
-      std::cout << "WOLVES WON\n";
-    if (status == SHEEP_WON)
-      std::cout << "SHEEP WON\n";
+    if (status != GAME_CONTINUES) {
+      std::cout << (status == WOLVES_WON ? "WOLVES WON" : "SHEEP WON") << std::endl;
+      break;
+    }
+    auto start_time = high_resolution_clock::now();
     auto answer = state.is_wolves_turn() ? wolves_player->ask() : sheep_player->ask();
+    auto finish_time = high_resolution_clock::now();
+    std::cout << "Answer time: " << duration_cast<duration<double>>(finish_time - start_time).count() << " seconds" << std::endl;
 
     if (answer == "EXIT")
       break;
@@ -79,6 +91,7 @@ void WolvesAndSheep::print_state() {
       else
         std::cout << "s▕";
     }
+    std::cout << " " << y;
   }
   std::cout << std::endl << ' ';
   for (int x = 0; x < BOARD_WIDTH; x++)

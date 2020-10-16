@@ -16,6 +16,7 @@ class WolvesAndSheep {
 
 public:
   WolvesAndSheep();
+  WolvesAndSheep(Player * sheep_player, Player * wolves_player);
 
   GameState copy_state();
 
