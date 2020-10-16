@@ -17,6 +17,7 @@ std::string AIPlayer::ask() {
   std::cout << "I called evaluation function "
     << heuristic_call_count << " times" << std::endl;
   auto str = move_to_str(move);
+  std::cerr << str << std::endl;
   std::cout << str << std::endl;
   return str;
 }

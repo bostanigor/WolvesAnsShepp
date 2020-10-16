@@ -14,6 +14,8 @@ class WolvesAndSheep {
   Player * sheep_player;
   Player * wolves_player;
 
+  GameStatus status;
+
 public:
   WolvesAndSheep();
   WolvesAndSheep(Player * sheep_player, Player * wolves_player);
@@ -22,6 +24,8 @@ public:
 
   void print_state();
   void start();
+
+  GameStatus get_status() { return status; }
 
 private:
   static bool decode(const std::string &, Move &);

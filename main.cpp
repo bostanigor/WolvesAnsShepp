@@ -18,17 +18,41 @@ Player * init_player() {
   }
 }
 
-int main() {
-  std::cout << "Welcome to WolvesAndSheep!" << std::endl;
-  
-  std::cout << "Who will be playing as Sheep? (0 - human, 1 - AI)" << std::endl;
-  Player * sheep_player = init_player();
-  std::cout << "Who will be playing as Wolves? (0 - human, 1 - AI)" << std::endl;
-  Player * wolves_player = init_player();
+int main(int argc, char *argv[]) {
+  if (argc <= 1) {
+    std::cout << "Welcome to WolvesAndSheep!" << std::endl;
 
-  auto game = WolvesAndSheep(sheep_player, wolves_player);
+    std::cout << "Who will be playing as Sheep? (0 - human, 1 - AI)" << std::endl;
+    Player * sheep_player = init_player();
+    std::cout << "Who will be playing as Wolves? (0 - human, 1 - AI)" << std::endl;
+    Player * wolves_player = init_player();
 
-  game.start();
+    auto game = WolvesAndSheep(sheep_player, wolves_player);
+
+    game.start();
+  }
+  else {
+    auto ai_level = std::stoi(argv[1]);
+    auto is_sheep = argv[2] == "0"; // if 0 - bot is sheep, 1 - wolves
+    Player * sheep_player;
+    Player * wolves_player;
+    if (is_sheep) {
+      sheep_player = new AIPlayer(ai_level);
+      wolves_player = new HumanPlayer();
+    }
+    else {
+      sheep_player = new HumanPlayer();
+      wolves_player = new AIPlayer(ai_level);
+    }
+
+    auto game = WolvesAndSheep(sheep_player, wolves_player);
+
+    game.start();
+    if (is_sheep && game.get_status() == SHEEP_WON)
+      return 0;
+    else
+      return 3;
+  }
 
   return 0;
 }

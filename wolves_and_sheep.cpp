@@ -19,7 +19,7 @@ WolvesAndSheep::WolvesAndSheep(Player *sheep_player, Player *wolves_player) {
 void WolvesAndSheep::start() {
   while(true){
     print_state();
-    auto status = state.check_win();
+    status = state.check_win();
     if (status != GAME_CONTINUES) {
       std::cout << (status == WOLVES_WON ? "WOLVES WON" : "SHEEP WON") << std::endl;
       break;
