@@ -24,4 +24,18 @@ public:
 
 private:
   static bool decode(const std::string &, Move &);
+  bool check_move(const Move &) const;
+};
+
+class GameException {
+  std::string message;
+
+public:
+  GameException(const std::string & message) {
+    this->message = message;
+  }
+
+  std::string what() const{
+    return message;
+  }
 };

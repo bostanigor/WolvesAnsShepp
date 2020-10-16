@@ -16,12 +16,15 @@ void WolvesAndSheep::start() {
     if (status == SHEEP_WON)
       std::cout << "SHEEP WON\n";
     auto answer = state.is_wolves_turn() ? wolves_player->ask() : sheep_player->ask();
+
     if (answer == "EXIT")
       break;
 
     auto move = Move();
     try {
       decode(answer, move);
+      check_move(move);
+
       state.move(move);
     }
     catch (GameException & e) {
@@ -31,6 +34,27 @@ void WolvesAndSheep::start() {
 
     last_message = answer;
   }
+}
+
+bool WolvesAndSheep::check_move(const Move & move) const {
+  if (!state.point_valid(move.from))
+    throw GameException("No checker at the point");
+  auto checker = state.get(move.from);
+  if (checker == nullptr)
+    throw GameException("No checker at the point");
+
+  // If wrong player's checker
+  if (checker->type == WOLF != state.is_wolves_turn())
+    throw GameException("Wrong player's checker");
+  if (abs(move.from.x - move.to.x) != 1 ||
+      abs(move.from.y - move.to.y) != 1)
+    throw GameException("Invalid move");
+  if (!state.point_valid(move.to))
+    throw GameException("Destination out of bounds");
+  auto to = state.get(move.to);
+  if (to != nullptr)
+    throw GameException("Destination is not empty");
+  return true;
 }
 
 GameState WolvesAndSheep::copy_state() {
@@ -56,23 +80,24 @@ void WolvesAndSheep::print_state() {
         std::cout << "s▕";
     }
   }
+  std::cout << std::endl << ' ';
+  for (int x = 0; x < BOARD_WIDTH; x++)
+    std::cout << ' ' << x;
   std::cout << std::endl << last_message << std::endl;
   std::cout << (state.is_wolves_turn() ? "WOLVES TURN" : "SHEEP TURN") << std::endl;
 }
 
 bool WolvesAndSheep::decode(const std::string & message, Move & move) {
   try {
-    auto delimeter_i = message.find("->");
+    auto delimeter_i = message.find(">");
     auto from = message.substr(0, delimeter_i);
-    auto to = message.substr(delimeter_i + 3);
+    auto to = message.substr(delimeter_i + 1);
 
-    auto del_f = from.find(' ');
-    move.from.x = stoi(from.substr(0, del_f));
-    move.from.y = stoi(from.substr(del_f + 1));
+    move.from.x = from[0] - '0';
+    move.from.y = from[1] - '0';
 
-    auto del_t = to.find(' ');
-    move.to.x = stoi(to.substr(0, del_t));
-    move.to.y = stoi(to.substr(del_t + 1));
+    move.to.x = to[0] - '0';
+    move.to.y = to[1] - '0';
     return true;
   }
   catch (const std::exception& ex) {

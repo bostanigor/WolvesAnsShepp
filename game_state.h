@@ -18,25 +18,13 @@ public:
   GameStatus check_win() const;
 
   Checker * get(int x, int y) const;
-  Checker * get(Point point) const;
+  Checker * get(const Point &) const;
 
   std::array<Checker *, 4> get_wolves() const;
   Checker * get_sheep() const;
 
   bool is_wolves_turn() const { return wolves_turn; }
 
-  static bool point_valid(Point);
-};
-
-class GameException {
-  std::string message;
-
-public:
-  GameException(const std::string & message) {
-    this->message = message;
-  }
-
-  std::string what() const{
-    return message;
-  }
+  bool point_empty(const Point &) const;
+  static bool point_valid(const Point &);
 };

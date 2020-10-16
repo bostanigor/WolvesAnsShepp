@@ -1,4 +1,5 @@
 #include "player.h"
+#include <queue>
 
 Player::Player(WolvesAndSheep * game, bool wolves_player) {
   this->game = game;
@@ -20,36 +21,39 @@ std::string AIPlayer::ask() {
 Move AIPlayer::best_move() {
   auto state = game->copy_state();
   Move result = Move();
-  min_max(&state, 10, result);
-  return result;
+  return min_max(&state, 7).move;
 }
 
-int AIPlayer::min_max(GameState * state, int limit, Move & best_move) {
+MoveWithF AIPlayer::min_max(GameState * state, int limit) {
+  auto best_move = Move();
   if (limit == 0)
-    return eval_heuristic(*state);
+    return MoveWithF{best_move, eval_heuristic(*state)};
 
-  int result = (state->is_wolves_turn() == wolves_player) ? INT_MIN : INT_MAX;
+  int result = (state->is_wolves_turn()) ? 200 : -200;
+  auto status = state->check_win();
+  if (status != GAME_CONTINUES)
+    return MoveWithF{best_move, status == SHEEP_WON ? 100 : -100};
 
   auto possible_moves = get_possible_moves(*state);
   for (auto move : possible_moves) {
-    try {
-      // TODO: Remove validity check from move. Game must process it instead.
-      state->move(move);
+    if (!(state->point_valid(move.to)) ||
+        !(state->point_empty(move.to)))
+        continue;
+    state->move(move);
 
-      auto f = min_max(state, limit - 1, best_move);
-      if ((state->is_wolves_turn() != wolves_player && f > result) ||
-          (state->is_wolves_turn() == wolves_player && f < result)) {
-        result = f;
-        best_move = move;
-      }
+    auto temp = min_max(state, limit - 1);
+    auto f = temp.f;
+    // Undo the move
+    state->move(Move{move.to, move.from});
 
-      // Undo the move
-      state->move(Move{move.to, move.from});
+    if ((state->is_wolves_turn() && f < result) ||
+        (!state->is_wolves_turn() && f > result)) {
+      result = f;
+      best_move = move;
     }
-    catch (GameException & e) {}
   }
 
-  return result;
+  return {best_move, result};
 }
 
 std::vector<Move> AIPlayer::get_possible_moves(const GameState &state) const {
@@ -75,5 +79,29 @@ std::vector<Move> AIPlayer::get_possible_moves(const GameState &state) const {
 }
 
 int AIPlayer::eval_heuristic(const GameState & state) const {
-  return 0;
+  std::queue<Point> point_queue;
+  std::array<std::array<int, BOARD_WIDTH>, BOARD_HEIGHT> map {};
+  Point next_points[4] = { Point{1, 1}, Point{-1, 1}, Point{1, -1}, Point{-1, -1} };
+  auto start_point = state.get_sheep()->pos;
+  point_queue.push(start_point);
+
+  while (!point_queue.empty())
+  {
+    auto from = point_queue.front();
+    point_queue.pop();
+
+    for (int i = 0; i < 4; i++) {
+      auto to = from + next_points[i];
+      if (state.point_valid(to) && state.point_empty(to)) {
+        if (map[to.x][to.y] > 0)
+          continue;
+        map[to.x][to.y] = map[from.x][from.y] + 1;
+        if (to.y == 0)
+          return map[to.x][to.y];
+        point_queue.push(to);
+      }
+    }
+  }
+  // If no turns lead to victory
+  return -100;
 }

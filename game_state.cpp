@@ -23,22 +23,9 @@ GameState::GameState(const GameState & other) {
 }
 
 bool GameState::move(const Move & move) {
-  if (!point_valid(move.from))
-    throw GameException("No checker at the point");
   auto checker = get(move.from);
   if (checker == nullptr)
-    throw GameException("No checker at the point");
-  if (checker->type == WOLF != wolves_turn) // If wrong player's checker
-    throw GameException("Wrong player's checker");
-  if (abs(move.from.x - move.to.x) != 1 ||
-      abs(move.from.y - move.to.y) != 1)
-    throw GameException("Invalid move");
-  if (!point_valid(move.to))
-    throw GameException("Destination out of bounds");
-  auto to = get(move.to);
-  if (to != nullptr)
-    throw GameException("Destination is not empty");
-
+    return false;
   checker->pos.x = move.to.x;
   checker->pos.y = move.to.y;
   std::swap(board.board[move.from.x][move.from.y],
@@ -67,13 +54,17 @@ Checker * GameState::get(int x, int y) const {
   return board.board[x][y];
 }
 
-Checker * GameState::get(Point point) const {
+Checker * GameState::get(const Point & point) const {
   return board.board[point.x][point.y];
 }
 
-bool GameState::point_valid(Point point) {
+bool GameState::point_valid(const Point & point) {
   return point.x >= 0 && point.x < BOARD_WIDTH &&
          point.y >= 0 && point.y < BOARD_HEIGHT;
+}
+
+bool GameState::point_empty(const Point & point) const {
+  return get(point) == nullptr;
 }
 
 std::array<Checker *, 4> GameState::get_wolves() const {

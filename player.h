@@ -23,6 +23,11 @@ public:
   std::string ask() override;
 };
 
+struct MoveWithF {
+  Move move;
+  int f;
+};
+
 class AIPlayer : public Player {
 public:
   explicit AIPlayer(WolvesAndSheep * game, bool wolves_player) :
@@ -33,7 +38,7 @@ public:
 private:
   Move best_move();
   int eval_heuristic(const GameState & state) const;
-  int min_max(GameState * state, int limit, Move & best_move);
+  MoveWithF min_max(GameState * state, int limit);
 
   std::vector<Move> get_possible_moves(const GameState & state) const;
 };

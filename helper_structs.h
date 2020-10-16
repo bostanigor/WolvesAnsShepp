@@ -20,7 +20,7 @@ struct Move {
 
 static std::string move_to_str(const Move & move) {
   std::stringstream ss;
-  ss << move.from.x << " " << move.from.y << " -> " << move.to.x << " " << move.to.y;
+  ss << move.from.x << move.from.y << ">" << move.to.x << move.to.y;
   return ss.str();
 };
 
